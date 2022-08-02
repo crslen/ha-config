@@ -1,0 +1,738 @@
+- id: '1559086425585'
+  alias: Turn on Living Room Lights at Sunset
+  trigger:
+  - event: sunset
+    platform: sun
+  condition: []
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id:
+      - light.living_room
+      - light.bedroom_dresser_lamp
+      - light.bedroom_lamp
+  mode: single
+- id: '1559092953220'
+  alias: Turn off inside house lights
+  trigger:
+  - at: '22:30'
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    service: light.turn_off
+    target:
+      entity_id: light.living_room
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.bedroom_lamp
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.bedroom_dresser_lamp
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.kitchen_fan_light
+  - service: light.turn_off
+    target:
+      entity_id: light.kitchen_cabinet_lights_1
+    data: {}
+  - service: light.turn_off
+    target:
+      entity_id: light.kitchen_cabinet_light_2
+    data: {}
+  mode: single
+- id: '1559666328014'
+  alias: Dark Theme as Default
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - data:
+      name: minimalist-desktop
+      mode: dark
+    service: frontend.set_theme
+- id: '1563042197936'
+  alias: Turn on Barn and House Flood Lights
+  trigger:
+  - event: sunset
+    offset: 00:20:00
+    platform: sun
+  condition: []
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id:
+      - light.barn_flood_lights_south
+      - light.barn_flood_lights_north
+      - light.garage_flood_lights
+      - light.house_flood_lights
+      - light.porch_lights
+      - light.govee_barn
+  mode: single
+- id: '1563042992364'
+  alias: Turn off Barn Lights
+  trigger:
+  - at: '22:00'
+    platform: time
+  condition: []
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.barn_flood_lights_north
+      - light.barn_flood_lights_south
+      - light.porch_lights
+      - light.garage_flood_lights
+      - light.govee_barn
+  mode: single
+- id: '1563043049156'
+  alias: Turn off House Flood Lights
+  trigger:
+  - at: '22:30'
+    platform: time
+  condition: []
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.house_flood_lights
+  mode: single
+- id: '1564185828436'
+  alias: Motion Detected - Hay Barn
+  trigger:
+  - entity_id: binary_sensor.blink_hay_barn_motion_detected
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - service: script.haybarn
+    data: {}
+  - service: notify.skyler
+    data:
+      message: Motion Detected Hay Barn
+      target: '#ha-notifications'
+  mode: single
+- id: '1565015648197'
+  alias: Motion Detected - Main Barn
+  trigger:
+  - entity_id: binary_sensor.blink_main_barn_motion_detected
+    from: 'off'
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - service: script.mainbarn
+  mode: single
+- id: '1571490020411'
+  alias: Arm Cameras
+  trigger:
+  - event: sunset
+    offset: 00:30:00
+    platform: sun
+  condition: []
+  action:
+  - data: {}
+    service: alarm_control_panel.alarm_arm_away
+    target:
+      entity_id:
+      - alarm_control_panel.blink_barn
+      - alarm_control_panel.blink_home
+  - data:
+      data: {}
+      message: Cameras armed
+    service: notify.chris_devices
+  mode: single
+- id: '1571490079281'
+  alias: Disarm Cameras
+  trigger:
+  - event: sunrise
+    platform: sun
+  condition: []
+  action:
+  - data: {}
+    service: alarm_control_panel.alarm_disarm
+    target:
+      entity_id:
+      - alarm_control_panel.blink_barn
+      - alarm_control_panel.blink_home
+  - service: input_number.increment
+    data: {}
+    target:
+      entity_id: input_number.nighttime
+  mode: single
+- id: '1576271515296'
+  alias: Refrigerator Door Open Alert
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.refrigerator_door_open
+    platform: state
+    from: 'off'
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
+      milliseconds: 0
+  condition: []
+  action:
+  - service: notify.chris_devices
+    data:
+      message: Refrigerator door is open
+  mode: single
+- id: '1577115264580'
+  alias: Weather Low Temperature Alert
+  description: ''
+  trigger:
+  - below: '35'
+    entity_id: sensor.weather_today_temp_low
+    platform: numeric_state
+  condition: []
+  action:
+  - service: notify.chris_devices
+    data:
+      message: Todays weather will be a low of {{state_attr('sensor.weather_forecast',     'temperatureMin')[0]
+        }}
+  mode: single
+- id: '1579640193993'
+  alias: Weather Precipitation Alert
+  description: ''
+  trigger:
+  - above: '0.01'
+    entity_id: sensor.weather_today_precipitation
+    platform: numeric_state
+  condition: []
+  action:
+  - service: notify.chris_devices
+    data:
+      message: '{{ states("sensor.weather_today_precipitation") }}" of rain is expected
+        today'
+- id: '1581179878369'
+  alias: Weather Cloud Cover
+  description: Turn on lights when cloud cover is detected
+  trigger:
+  - above: '85'
+    entity_id: sensor.weather_today_cloud_cover
+    platform: numeric_state
+  condition:
+  - after: sunrise
+    before: sunset
+    condition: sun
+  action:
+  - data:
+      data: {}
+      message: Cloud cover is at {{ states("sensor.weather_today_cloud_cover") }}
+        turning on lights.
+    service: notify.chris_devices
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id: light.living_room
+  - service: light.turn_on
+    target:
+      entity_id: light.bedroom_dresser_lamp
+  mode: single
+- id: '1586614277092'
+  alias: Timelaps - Pasture
+  description: ''
+  trigger:
+  - platform: time
+    at: '10:00:00'
+  condition: []
+  action:
+  - data: {}
+    service: script.pasture
+  mode: single
+- id: '1600607854620'
+  alias: Turn on Kitchen Light
+  description: ''
+  trigger:
+  - platform: time
+    at: 06:30
+  condition: []
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id: light.kitchen_fan_light
+  - service: light.turn_on
+    target:
+      entity_id: light.kitchen_cabinet_lights_1
+    data: {}
+  - service: light.turn_on
+    target:
+      entity_id: light.kitchen_cabinet_light_2
+    data: {}
+  mode: single
+- id: '1605985026265'
+  alias: Kids block weekends - 12am
+  description: Disables devices midnight on weekends
+  trigger:
+  - platform: time
+    at: '23:59:59'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'off'
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id:
+      - switch.ellery_devices
+      - switch.reese_devices
+  mode: single
+- id: '1605985129618'
+  alias: Kids block weekdays 10pm
+  description: Disable devices on weekdays
+  trigger:
+  - platform: time
+    at: '23:59:00'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'on'
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id:
+      - switch.reese_devices
+      - switch.ellery_devices
+  mode: single
+- id: '1606235041368'
+  alias: Kids Allow Devices
+  description: ''
+  trigger:
+  - platform: time
+    at: 07:00
+  condition: []
+  action:
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id:
+      - switch.ellery_devices
+      - switch.reese_devices
+  mode: single
+- id: '1612653625337'
+  alias: Chicken Door Open
+  description: Opens chicken door at sunrise
+  trigger:
+  - platform: sun
+    event: sunrise
+    offset: 00:30:00
+  condition: []
+  action:
+  - device_id: 55e8b580608dda04c9fef0f598a5ecff
+    domain: cover
+    entity_id: cover.chicken_door_cover
+    type: set_position
+    position: 100
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: script.haybarn
+    data: {}
+  mode: single
+- id: '1612653762133'
+  alias: Chicken Door Close
+  description: Closes chicken door 1 hour after sunset
+  trigger:
+  - platform: sun
+    event: sunset
+    offset: 00:30:00
+  condition: []
+  action:
+  - device_id: 55e8b580608dda04c9fef0f598a5ecff
+    domain: cover
+    entity_id: cover.chicken_door_cover
+    type: set_position
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: script.haybarn
+    data: {}
+  mode: single
+- id: '1627218296502'
+  alias: Turn on Bubbles Fan
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.ktxchina16_temp
+    above: '89'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  condition: []
+  action:
+  - service: fan.turn_on
+    data: {}
+    target:
+      entity_id: fan.fan_bubbles
+  - service: notify.skyler
+    data:
+      target: '#ha-notifications'
+      message: Bubbles Fan is on
+  mode: single
+- id: '1627218389558'
+  alias: Turn off Bubbles Fan
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.ktxchina16_temp
+    below: '88'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  condition: []
+  action:
+  - service: fan.turn_off
+    data: {}
+    target:
+      entity_id: fan.fan_bubbles
+  - service: notify.skyler
+    data:
+      message: Bubbles fan is off
+      target: '#ha-notifications'
+  mode: single
+- id: '1630880170682'
+  alias: Turn on patio fan
+  description: ''
+  trigger:
+  - platform: time
+    at: '18:00:00'
+  condition: []
+  action:
+  - service: switch.turn_on
+    target:
+      device_id: ab4444fd2548865b063be26036f4da5e
+  mode: single
+- id: '1630880302413'
+  alias: Turn off patio fan
+  description: ''
+  trigger:
+  - platform: time
+    at: '20:00:00'
+  condition: []
+  action:
+  - service: switch.turn_off
+    target:
+      device_id: ab4444fd2548865b063be26036f4da5e
+  mode: single
+- id: '1635369876490'
+  alias: MAM
+  description: ''
+  trigger:
+  - platform: time
+    at: 06:00:00
+  condition: []
+  action:
+  - service: pyscript.get_mam_jsonload
+    data: {}
+  mode: single
+- id: '1643464446510'
+  alias: Frigate Notification - Garage
+  description: ''
+  use_blueprint:
+    path: hunterjm/frigate_notification.yaml
+    input:
+      camera: garage
+      labels:
+      - person
+      - horse
+      - car
+      notify_device: 24be150f53f5968839fd4b876697dbf0
+- id: '1643466750528'
+  alias: Frigate Notification - Front Door
+  description: ''
+  use_blueprint:
+    path: hunterjm/frigate_notification.yaml
+    input:
+      camera: front_door
+      labels:
+      - person
+      - car
+      cooldown: 60
+      notify_device: 24be150f53f5968839fd4b876697dbf0
+- id: '1649361047941'
+  alias: Wind Direction
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.ktxchina16_wind_dir
+    above: '140'
+    below: '200'
+  condition: []
+  action:
+  - service: notify.chris_devices
+    data:
+      message: Wind is blowing north
+  mode: single
+- id: '1651703133672'
+  alias: Enable Nighttime Value
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunset
+    offset: 0
+  condition: []
+  action:
+  - service: input_number.decrement
+    data: {}
+    target:
+      entity_id: input_number.nighttime
+  mode: single
+- id: '1655123388099'
+  alias: Garage Door Alert
+  description: ''
+  trigger:
+  - platform: time
+    at: '21:00:00'
+  condition:
+  - condition: state
+    entity_id: cover.garage_door_q
+    state: open
+  action:
+  - service: notify.chris_devices
+    data:
+      message: Garage door is open
+  mode: single
+- id: '1655410636384'
+  alias: Water Garden
+  description: ''
+  trigger:
+  - platform: time
+    at: 07:00:00
+  - platform: time
+    at: '16:00:00'
+  condition: []
+  action:
+  - service: script.garden_water_10_minutes
+    data: {}
+  mode: single
+- id: '1655496800604'
+  alias: Water Front
+  description: ''
+  trigger:
+  - platform: time
+    at: 07:00:00
+  condition: []
+  action:
+  - service: script.front_water_10_minutes
+    data: {}
+  mode: single
+- id: '1655743027324'
+  alias: Update Garden Countdown
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_number.garden_minutes
+  condition: []
+  action:
+  - service: localtuya.set_dp
+    data:
+      device_id: DC2
+      dp: 107
+      value: '{{ states("input_number.garden_minutes") | int }}'
+  mode: single
+- id: '1655743690509'
+  alias: Update Front Countdown
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_number.front_minutes
+  condition: []
+  action:
+  - service: localtuya.set_dp
+    data:
+      device_id: DC1
+      dp: 107
+      value: '{{ states("input_number.front_minutes") | int }}'
+  mode: single
+- id: '1655921743179'
+  alias: Attic Furnace Leak Detected
+  description: ''
+  trigger:
+  - type: moist
+    platform: device
+    device_id: cb314267ff9b42e59b80cc88786285c6
+    entity_id: binary_sensor.water_leak_sensor
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: notify.chris_devices
+    data:
+      message: Attic leak detected
+  mode: single
+- id: '1656790004808'
+  alias: Attic Fan turn on Low > 90 degrees
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.quietcool_sht3x_temperature
+    above: '90'
+  condition:
+  - condition: state
+    entity_id: switch.quietcool_low
+    state: 'off'
+  - condition: state
+    entity_id: switch.quietcool_high
+    state: 'off'
+  action:
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.quietcool_low
+  mode: single
+- id: '1656790211109'
+  alias: Attic Fan turn on High > 100 degrees
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.quietcool_sht3x_temperature
+    above: '100'
+  condition:
+  - condition: state
+    entity_id: switch.quietcool_low
+    state: 'on'
+  - condition: state
+    entity_id: switch.quietcool_high
+    state: 'off'
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.quietcool_low
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.quietcool_high
+  mode: single
+- id: '1656790481701'
+  alias: Attic Fan turn on Low < 95 degrees
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.quietcool_sht3x_temperature
+    below: '95'
+  condition:
+  - condition: state
+    entity_id: switch.quietcool_low
+    state: 'off'
+  - condition: state
+    entity_id: switch.quietcool_high
+    state: 'on'
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.quietcool_high
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.quietcool_low
+  mode: single
+- id: '1656790608632'
+  alias: Attic Fan turn off < 88 degrees
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.quietcool_sht3x_temperature
+    below: '88'
+  condition: []
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id:
+      - switch.quietcool_high
+      - switch.quietcool_low
+  mode: single
+- id: '1656856336183'
+  alias: Ellery TV Screentime
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_number.tv_allow_hours
+  condition: []
+  action:
+  - service: script.ellery_allow_tv_in_hours
+    data: {}
+  mode: single
+- id: '1658703324418'
+  alias: Washer Completed
+  description: ''
+  trigger:
+  - type: turned_on
+    platform: device
+    device_id: 3a4d1ed9bb961d058b356e9248b1403b
+    entity_id: binary_sensor.washer_wash_completed
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: notify.mobile_app_iphone
+    data:
+      message: Washer has completed
+  mode: single
+- id: '1658708665048'
+  alias: Temp < 100
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.ktxchina16_temp
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    below: '100'
+  condition: []
+  action:
+  - service: notify.mobile_app_iphone
+    data:
+      message: Temp is below 100
+  mode: single
+- id: '1658848039303'
+  alias: Washer Error
+  description: ''
+  trigger:
+  - type: problem
+    platform: device
+    device_id: 3a4d1ed9bb961d058b356e9248b1403b
+    entity_id: binary_sensor.washer_error_state
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: notify.chris_devices
+    data:
+      message: '{{ states(''sensor.washer_error_message'') }}'
+  mode: single
+- id: '1659304256188'
+  alias: New Device Detected
+  description: ''
+  trigger:
+  - platform: event
+    event_type: device_tracker_new_device
+  condition: []
+  action:
+  - service: notify.chris_devices
+    data:
+      message: New device connected, {{trigger.event.data.host_name}},     ({{trigger.event.data.entity_id}})
+  mode: single

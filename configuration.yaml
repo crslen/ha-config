@@ -1,0 +1,101 @@
+http:
+  # Update this line to be your domain
+  cors_allowed_origins: !secret fqdn
+  use_x_forwarded_for: true
+  # You must set the trusted proxy IP address so that Home Assistant will properly accept connections
+  # Set this to your NGINX machine IP, or localhost if hosted on the same machine.
+  trusted_proxies: 192.168.1.0/24
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Enable API
+api:
+  api_password: !secret api_password
+
+# Discover some devices automatically
+discovery:
+  enable:
+
+###########################################
+# Simple Components
+###########################################
+map:
+sun:
+tts:
+  - platform: google_translate
+    service_name: google_say
+
+###########################################
+# Includes
+###########################################
+automation: !include automations.yaml
+notify: !include notify.yaml
+script: !include scripts.yaml
+sensor: !include_dir_merge_list sensor
+switch: !include_dir_merge_list switch
+fan: !include templates/fans.yaml
+weather: !include templates/weather.yaml
+scene: !include scenes.yaml
+localtuya: !include templates/tuya.yaml
+utility_meter: !include templates/utility.yaml
+
+tplink:
+  switch:
+    - host: 192.168.1.121
+    - host: 192.168.1.120
+
+logger:
+  default: info
+  logs:
+    custom_components.netgear_enhanced: debug
+  
+pyscript:
+  allow_all_imports: true
+  hass_is_global: true
+  apps:
+    mam:
+      - service_name: get_mam_jsonLoad
+        url: !secret mam_url
+        cookie: !secret mam_cookie
+
+influxdb:
+  host: a0d7b954-influxdb
+  port: 8086
+  database: homeassistant
+  username: homeassistant
+  password: !secret my_password
+  max_retries: 3
+  default_measurement: state
+
+binary_sensor:
+  - platform: template
+    sensors:
+      flume_status:
+        friendly_name: "Flume Flow Status"
+        value_template: >-
+          {{ states.sensor.flume_sensor_home.state != "0" }}
+  - platform: workday
+    country: US
+    workdays: [mon, tue, wed, thu, fri]
+    excludes: [sat, sun, holiday]
+    days_offset: 1
+
+light:
+  - platform: decora_wifi
+    username: !secret my_email
+    password: !secret my_password
+
+homekit:
+  - name: HASS Bridge
+    port: 21064
+    # ip_address: 0.0.0.0
+    advertise_ip: !secret host
+    filter:
+      include_domains:
+        - alarm_control_panel
+        - light
+        - switch
+        - vacuum
+        - cover
+        - fan
+        - media_player

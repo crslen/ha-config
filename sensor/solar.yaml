@@ -1,0 +1,50 @@
+- platform: template
+  sensors:
+    # solar panel utilization
+    solar_panel_utilization:
+      friendly_name: "Usage of panels in percent"
+      unit_of_measurement: "%"
+      value_template: >
+        {{ (states("sensor.power_ac_fronius_inverter_http_192_168_1_80") | float * 100 / 13500) | round(1) }}
+    net_metering_daily:
+      friendly_name: "Net Metering Daily"
+      unit_of_measurement: "kWh"
+      value_template: >
+        {{ (states("sensor.energy_day_fronius_inverter_http_192_168_1_80") | float / 1000 - states("sensor.totalusage_totalusage_1d") | float) | round(1) }}
+    return_to_grid:
+      friendly_name: "Return to Grid"
+      unit_of_measurement: "kWh"
+      icon_template: mdi:lightning-bolt
+      value_template: >
+        {% if states("sensor.net_metering_daily") | float  <= 0 %}
+        {{ 0 }}
+        {% else %}
+        {{ states("sensor.net_metering_daily") }}
+        {% endif %}
+# - platform: utility_meter
+#   solar_energy_daily:
+#     source: sensor.energy_day_fronius_inverter_system_http_192_168_1_80
+#     cycle: daily
+#   solar_energy_monthly:
+#     source: sensor.energy_day_fronius_inverter_system_http_192_168_1_80
+#     cycle: monthly
+#   solar_energy_yearly:
+#     source: sensor.energy_day_fronius_inverter_system_http_192_168_1_80
+#     cycle: yearly
+#   home_energy_daily:
+#     source: sensor.totalusage_totalusage_1d
+#     cycle: daily
+#   home_energy_monthly:
+#     source: sensor.totalusage_totalusage_1d
+#     cycle: monthly
+#   home_energy_yearly:
+#     source: sensor.totalusage_totalusage_1d
+#     cycle: yearly
+#   net_metering_monthly:
+#     source: sensor.net_metering_daily
+#     cycle: monthly
+#     net_consumption: true
+#   net_metering_yearly:
+#     source: sensor.net_metering_daily
+#     cycle: yearly
+#     net_consumption: true

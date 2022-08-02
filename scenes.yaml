@@ -1,0 +1,53 @@
+- id: '1654007328652'
+  name: Open Garage Door
+  entities:
+    cover.garage_door:
+      device_class: garage
+      friendly_name: Garage Door
+      supported_features: 3
+      state: open
+  icon: mdi:garage-open
+- id: '1656951827343'
+  name: Close Garage Door
+  entities:
+    cover.garage_door:
+      device_class: garage
+      friendly_name: Garage Door
+      supported_features: 3
+      state: closed
+  icon: mdi:garage
+- id: '1656892856998'
+  name: Watch TV
+  entities:
+    light.kitchen_canned_lights:
+      supported_color_modes:
+      - onoff
+      friendly_name: Kitchen Canned Lights
+      supported_features: 0
+      state: 'off'
+    light.kitchen_cabinet_lights_1:
+      supported_color_modes:
+      - onoff
+      friendly_name: Kitchen cabinet lights 1
+      supported_features: 0
+      state: 'off'
+    light.living_room:
+      effect_list:
+      - None
+      - candle
+      supported_color_modes:
+      - brightness
+      mode: normal
+      dynamics: none
+      friendly_name: Living room
+      supported_features: 44
+      state: 'off'
+    light.kitchen_fan_light:
+      effect_list: []
+      supported_color_modes:
+      - onoff
+      friendly_name: Kitchen Fan Light
+      supported_features: 4
+      state: 'off'
+  icon: mdi:television
+

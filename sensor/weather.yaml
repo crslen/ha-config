@@ -1,0 +1,145 @@
+- platform: scrape
+  resource: http://192.168.1.174/livedata.htm
+  name: Live Data
+  select: "enclosure"
+  index: 1
+  attribute: url
+  unit_of_measurement: "UV Index"
+
+- platform: template
+  sensors:
+    friendly_wind_direction:
+      friendly_name: "Wind Direction"
+      value_template: >-
+        {%if states.sensor.ktxchina16_wind_dir.state | float<=11 %}N
+        {% elif states.sensor.ktxchina16_wind_dir.state | float>348 %}N
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=34 | float>11 %}NNE
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=56 | float>34 %}NE
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=79 | float>56 %}ENE
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=101 | float>79 %}E
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=124 | float>101 %}ESE
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=146 | float>124 %}SE
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=169 | float>146 %}SSE
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=191 | float>169 %}S
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=214 | float>191 %}SSW
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=236 | float>214 %}SW
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=259 | float>236 %}WSW
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=281 | float>259 %}W
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=304 | float>281 %}WNW
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=326 | float>304 %}NW
+        {% elif states.sensor.ktxchina16_wind_dir.state | float<=348 | float>326 %}NNW
+        {%- endif %}
+
+- platform: rest
+  name: weather_forecast
+  json_attributes:
+    - dayOfWeek
+    - qpf
+    - temperatureMax
+    - temperatureMin
+    - daypart
+  value_template: '{{ value_json["expirationTimeUtc"][0] }}'
+  resource: !secret weather_url
+  scan_interval: 300
+
+- platform: template
+  sensors:
+    weather_today_narrative:
+      value_template: "{{ states.sensor.weather_forecast.attributes.daypart[0].narrative[0] }}"
+      friendly_name: Today's Narrative
+    weather_tonight_narrative:
+      value_template: "{{ states.sensor.weather_forecast.attributes.daypart[0].narrative[1] }}"
+      friendly_name: Tonight's Narrative
+    weather_tomorrow_narrative:
+      value_template: "{{ states.sensor.weather_forecast.attributes.daypart[0].narrative[2] }}"
+      friendly_name: Tomorrow's Narrative
+    weather_today_cloud_cover:
+      value_template: "{{ states.sensor.weather_forecast.attributes.daypart[0].cloudCover[0] }}"
+      friendly_name: Today's Cloud Cover
+      unit_of_measurement: "%"
+    weather_today_precip_chance:
+      value_template: "{{ states.sensor.weather_forecast.attributes.daypart[0].precipChance[0] }}"
+      friendly_name: Today's Precipitation Chance
+      unit_of_measurement: "%"
+    weather_tonight_precip_chance:
+      value_template: "{{ states.sensor.weather_forecast.attributes.daypart[0].precipChance[1] }}"
+      friendly_name: Tonight's Precipitation Chance
+      unit_of_measurement: "%"
+    weather_today_conditions:
+      value_template: "{{ states.sensor.weather_forecast.attributes.daypart[0].wxPhraseLong[0] }}"
+      friendly_name: Today's Conditions
+    weather_tonight_conditions:
+      value_template: "{{ states.sensor.weather_forecast.attributes.daypart[0].wxPhraseLong[1] }}"
+      friendly_name: Tonight's Conditions
+    weather_tomorrow_conditions:
+      value_template: "{{ states.sensor.weather_forecast.attributes.daypart[0].wxPhraseLong[2] }}"
+      friendly_name: Tomorrow's Conditions
+    weather_today_precipitation:
+      value_template: "{{ states.sensor.weather_forecast.attributes.qpf[0] }}"
+      friendly_name: Today's Precipitation
+      unit_of_measurement: '"'
+    weather_today_dayofweek:
+      value_template: "{{ states.sensor.weather_forecast.attributes.dayOfWeek[0] }}"
+      friendly_name: Day of Week
+    weather_today_temp_low:
+      value_template: "{{ states.sensor.weather_forecast.attributes.temperatureMin[0] }}"
+      friendly_name: Today's Temp Low
+      unit_of_measurement: "° F"
+    weather_today_temp_max:
+      value_template: "{{ states.sensor.weather_forecast.attributes.temperatureMax[0] }}"
+      friendly_name: Today's Temp High
+      unit_of_measurement: "° F"
+    weather_today_head_index:
+      value_template: "{{ states.sensor.weather_forecast.attributes.daypart[0].temperatureHeatIndex[0] }}"
+      friendly_name: Today's Heat Index
+      unit_of_measurement: "° F"
+    # pws_location:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].neighborhood }}"
+    #   friendly_name: Location
+    # pws_station_id:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].stationID }}"
+    #   friendly_name: PWS Station ID
+    #   icon_template: mdi:fingerprint
+    # pws_type:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].softwareType }}"
+    # pws_wind_dir:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].winddir }}"
+    # pws_wind_gust:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].windGust }}"
+    #   friendly_name: Wind Gust Speed MPH
+    #   unit_of_measurement: "mph"
+    #   icon_template: mdi:speedometer
+    # pws_wind_speed:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].imperial.windSpeed }}"
+    #   friendly_name: Wind Speed
+    #   unit_of_measurement: "mph"
+    #   icon_template: mdi:weather-windy
+    # pws_humidity:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].humidity }}"
+    #   friendly_name: Relative Humidity
+    #   unit_of_measurement: "%"
+    #   icon_template: mdi:water-percent
+    # pws_precip_total:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].imperial.precipTotal }}"
+    #   friendly_name: Precip Today String
+    #   icon_template: mdi:water
+    # pws_precip_rate:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].imperial.precipRate }}"
+    #   friendly_name: Precip Last Hour String
+    #   unit_of_measurement: '"'
+    #   icon_template: mdi:cup-water
+    # pws_temp:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].imperial.temp }}"
+    #   friendly_name: Temperature F
+    #   unit_of_measurement: "° F"
+    #   icon_template: mdi:thermometer
+    # pws_heatindex:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].imperial.heatIndex }}"
+    #   friendly_name: Heat Index F
+    #   unit_of_measurement: "° F"
+    #   icon_template: mdi:thermometer-lines
+    # pws_solar:
+    #   value_template: "{{ states.sensor.pws_report.attributes.observations[0].solarRadiation }}"
+    #   friendly_name: Solar Radiation
+    #   unit_of_measurement: "w/m2"
+    #   icon_template: mdi:solar-panel

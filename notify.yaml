@@ -1,0 +1,10 @@
+# - platform: slack
+#   name: slack_notify
+#   api_key: !secret slack_api
+#   default_channel: '#ha-notifications'
+- name: CHRIS_DEVICES
+  platform: group
+  # name: CHRIS_DEVICES
+  services:
+    - service: mobile_app_iphone
+    - service: mobile_app_clennon_a02

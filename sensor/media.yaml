@@ -1,0 +1,42 @@
+#- platform: tautulli
+#  api_key: 4a97414916b4488d842663e9f898c66c
+#  host: !secret host
+# - platform: sonarr
+#   api_key: !secret sonarr_api
+#   host: !secret host
+#   port: 8989
+#   days: 7
+#   monitored_conditions:
+#     - diskspace
+#     - series
+#     - upcoming
+#   include_paths:
+#     - /tv
+
+- platform: radarr
+  api_key: !secret radarr_api
+  host: !secret host
+  port: 7878
+  days: 7
+  monitored_conditions:
+    - diskspace
+    # - movies
+    - upcoming
+    - status
+  include_paths:
+    - /movies
+# - platform: plex_recently_added
+#   name: Recently Added Movies # will create sensor.recently_added_movies
+#   token: !secret token
+#   host: !secret host
+#   port: 32400
+#   section_types:
+#   - movie
+
+# - platform: plex_recently_added
+#   name: Recently Added TV  # will create sensor.recently_added_tv
+#   token: !secret token
+#   host: !secret host
+#   port: 32400
+#   section_types:
+#   - show

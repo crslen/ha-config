@@ -1,0 +1,70 @@
+- platform: template
+  sensors:
+    emporia_sensors_total:
+      friendly_name: "Total energy from emporia sensors"
+      unit_of_measurement: "kWh"
+      value_template: >-
+        {{ (states('sensor.ac_1_1d') | float + states('sensor.heater_2_1d') | float + states('sensor.stove_and_oven_3_1d') | float + states('sensor.mudroom_4_1d') | float + states('sensor.master_bedroom_5_1d') | float + states('sensor.barn_6_1d') | float + states('sensor.living_room_7_1d') | float + states('sensor.garage_8_1d') | float) | int}}
+- platform: template
+  sensors:
+    emporia_sensors_total_percent:
+      friendly_name: "Other percent used"
+      unit_of_measurement: "%"
+      value_template: >-
+        {{ (states('sensor.emporia_sensors_total') | float / states('sensor.totalusage_totalusage_1d') | float * 100) | int }}
+- platform: template
+  sensors:
+    ac_1_1d_percent:
+      friendly_name: "AC percent used"
+      unit_of_measurement: "%"
+      value_template: >-
+        {{ (states('sensor.ac_1_1d') | float / states('sensor.totalusage_totalusage_1d') | float * 100) | int }}
+- platform: template
+  sensors:
+    heater_2_1d_percent:
+      friendly_name: "Heater percent used"
+      unit_of_measurement: "%"
+      value_template: >-
+        {{ (states('sensor.heater_2_1d') | float / states('sensor.totalusage_totalusage_1d') | float * 100) | int }}
+- platform: template
+  sensors:
+    stove_and_oven_3_1d_percent:
+      friendly_name: "Stove/oven percent used"
+      unit_of_measurement: "%"
+      value_template: >-
+        {{ (states('sensor.stove_and_oven_3_1d') | float / states('sensor.totalusage_totalusage_1d') | float * 100) | int }}
+- platform: template
+  sensors:
+    mudroom_4_1d_percent:
+      friendly_name: "Water heater mudroom percent used"
+      unit_of_measurement: "%"
+      value_template: >-
+        {{ (states('sensor.mudroom_4_1d') | float / states('sensor.totalusage_totalusage_1d') | float * 100) | int }}
+- platform: template
+  sensors:
+    master_bedroom_5_1d_percent:
+      friendly_name: "Water heater bedroom percent used"
+      unit_of_measurement: "%"
+      value_template: >-
+        {{ (states('sensor.master_bedroom_5_1d') | float / states('sensor.totalusage_totalusage_1d') | float * 100) | int }}
+- platform: template
+  sensors:
+    barn_6_1d_percent:
+      friendly_name: "Barn percent used"
+      unit_of_measurement: "%"
+      value_template: >-
+        {{ (states('sensor.barn_6_1d') | float / states('sensor.totalusage_totalusage_1d') | float * 100) | int }}
+- platform: template
+  sensors:
+    living_room_7_1d_percent:
+      friendly_name: "Living room percent used"
+      unit_of_measurement: "%"
+      value_template: >-
+        {{ (states('sensor.living_room_7_1d') | float / states('sensor.totalusage_totalusage_1d') | float * 100) | int }}
+- platform: template
+  sensors:
+    garage_8_1d_percent:
+      friendly_name: "Garage percent used"
+      unit_of_measurement: "%"
+      value_template: >-
+        {{ (states('sensor.garage_8_1d') | float / states('sensor.totalusage_totalusage_1d') | float * 100) | int }}

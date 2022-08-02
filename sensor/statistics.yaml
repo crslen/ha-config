@@ -1,0 +1,22 @@
+- platform: statistics
+  name: "AC power max value over the last 24 hours"
+  entity_id: sensor.power_ac_fronius_inverter_http_192_168_1_80
+  state_characteristic: value_max
+  max_age:
+    hours: 24
+
+- platform: statistics
+  name: "Indoor humidity mean over last 24 hours"
+  entity_id: sensor.ktxchina16_humidity_in
+  state_characteristic: mean
+  max_age:
+    hours: 24
+
+- platform: statistics
+  name: "Indoor humidity change over 5 minutes"
+  entity_id: sensor.ktxchina16_humidity_in
+  state_characteristic: change
+  max_age:
+    minutes: 5
+  sampling_size: 50
+  precision: 1

@@ -1,0 +1,49 @@
+  - host: 192.168.1.128
+    device_id: eb0aae5ff5463dd062f1wf
+    local_key: e389a95d13aa318d
+    friendly_name: Tuya Gateway
+    protocol_version: "3.3"
+    is_gateway: true
+  - parent_gateway: eb0aae5ff5463dd062f1wf # This tells it is a sub-device dependent on a parent gateway
+    device_id: DCB # The cid of sub-device
+    friendly_name: Tuya Zigbee Switch
+    entities:
+      - platform: switch
+        friendly_name: Tuya Zigbee Switch
+        id: 1
+  - parent_gateway: eb0aae5ff5463dd062f1wf # This tells it is a sub-device dependent on a parent gateway
+    device_id: DC1 # The cid of sub-device
+    friendly_name: Water Timer Front
+    entities:
+      - platform: switch
+        friendly_name: Water Timer Front
+        id: 108
+      - platform: sensor
+        friendly_name: water countdown Front
+        unit_of_measurement: Minutes
+        id: 107
+      - platform: binary_sensor
+        friendly_name: water timer front status
+        id: 106
+      - platform: sensor
+        friendly_name: water consumption Front
+        unit_of_measurement: "L"
+        id: 103
+  - parent_gateway: eb0aae5ff5463dd062f1wf # This tells it is a sub-device dependent on a parent gateway
+    device_id: DC2 # The cid of sub-device
+    friendly_name: Water Timer Garden
+    entities:
+      - platform: switch
+        friendly_name: Water Timer Garden
+        id: 108
+      - platform: sensor
+        friendly_name: water countdown Garden
+        unit_of_measurement: Minutes
+        id: 107
+      - platform: binary_sensor
+        friendly_name: water timer garden status
+        id: 106
+      - platform: sensor
+        friendly_name: water consumption Garden
+        unit_of_measurement: "L"
+        id: 103

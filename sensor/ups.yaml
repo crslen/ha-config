@@ -1,0 +1,13 @@
+- platform: template
+  sensors:
+    home_ups_power_usage:
+      friendly_name: UPS Power Usage
+      device_class: power
+      unit_of_measurement: W
+      icon_template: mdi:lightning-bolt
+      value_template: >
+        {% if states('sensor.home_ups_status_data') in ['OL', 'OL CHRG'] %}
+          {{ (states('sensor.home_ups_load') | float) / 100 * (states('sensor.home_ups_nominal_real_power') | float) }}
+        {% else %}
+          {{ 0 }}
+        {% endif %}

@@ -1,0 +1,40 @@
+switch:
+  - platform: mqtt
+    name: "Kitchen Canned Lights"
+    state_topic: "stat/kitchen_canned_lights/RESULT"
+    value_template: "{{ value_json.POWER }}"
+    command_topic: "cmnd/kitchen_canned_lights/POWER"
+    payload_on: "ON"
+    payload_off: "OFF"
+    availability_topic: "tele/kitchen_canned_lights/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    retain: false
+    icon: hass:lightbulb
+
+  - platform: template
+    switches:
+      water_timer_front:
+        value_template: "{{ is_state('binary_sensor.water_timer_front_status', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          target:
+            entity_id: switch.water_timer_front
+        turn_off:
+          service: switch.turn_off
+          target:
+            entity_id: switch.water_timer_front
+
+  - platform: template
+    switches:
+      water_timer_garden:
+        value_template: "{{ is_state('binary_sensor.water_timer_garden_status', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          target:
+            entity_id: switch.water_timer_garden
+        turn_off:
+          service: switch.turn_off
+          target:
+            entity_id: switch.water_timer_garden

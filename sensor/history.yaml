@@ -1,0 +1,23 @@
+- platform: template
+  sensors:
+    my_ecobee_fan: 
+      value_template: '{{ states.climate.my_ecobee.attributes.fan }}'
+      friendly_name: State of Fan
+
+- platform: history_stats
+  name: Furnace fan last 24 hours
+  entity_id: sensor.my_ecobee_fan
+  state: 'on'
+  type: time
+  start: '{{ now().replace(hour=0, minute=0, second=0) }}'
+  end: '{{ now() }}'
+
+- platform: history_stats
+  name: Furnace fan last 7 days
+  entity_id: sensor.my_ecobee_fan
+  state: 'on'
+  type: time
+  # start: '{{ now().replace(hour=0, minute=0, second=0) }}'
+  end: '{{ now().replace(hour=0, minute=0, second=0) }}'
+  duration:
+    days: 7

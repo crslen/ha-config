@@ -1,0 +1,9 @@
+# binary_sensor:
+#   - platform: mqtt
+#     name: "Garage Sensor"
+#     state_topic: "stat/garage/MOTION"
+#     availability_topic: "tele/garage/LWT"
+#     payload_available: "Online"
+#     payload_not_available: "Offline"
+#     device_class: garage_door
+#     qos: 1

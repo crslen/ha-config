@@ -1,0 +1,8 @@
+person.chris:
+  entity_picture: /local/chris.jpg
+person.kate:
+  entity_picture: /local/kate.jpg
+device_tracker.2016_jeep_wrangler_unlimited: 
+  entity_picture: /local/jeep.jpg
+device_tracker.2016_toyota_tundra_4wd_truck:
+  entity_picture: /local/tundra.jpg

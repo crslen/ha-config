@@ -1,0 +1,7 @@
+  - platform: template
+    name: "ktxchina16"
+    condition_template: "{{ states('weather.my_ecobee') }}"
+    temperature_template: "{{ states('sensor.ktxchina16_temp') | float }}"
+    humidity_template: "{{ states('sensor.ktxchina16_humidity') | float }}"
+    wind_bearing_template: "{{ states('sensor.ktxchina16_wind_dir') }}"
+    

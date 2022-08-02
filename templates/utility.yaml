@@ -1,0 +1,48 @@
+  solar_energy_daily:
+    source: sensor.energy_day_fronius_inverter_http_192_168_1_80
+    cycle: daily
+  solar_energy_monthly:
+    source: sensor.energy_day_fronius_inverter_http_192_168_1_80
+    cycle: monthly
+  solar_energy_yearly:
+    source: sensor.energy_day_fronius_inverter_http_192_168_1_80
+    cycle: yearly
+  home_energy_daily:
+    source: sensor.totalusage_totalusage_1d
+    cycle: daily
+  home_energy_monthly:
+    source: sensor.totalusage_totalusage_1d
+    cycle: monthly
+  home_energy_yearly:
+    source: sensor.totalusage_totalusage_1d
+    cycle: yearly
+  return_to_grid_daily:
+    source: sensor.return_to_grid
+    cycle: monthly
+    net_consumption: true
+  net_metering_monthly:
+    source: sensor.net_metering_daily
+    cycle: monthly
+    net_consumption: true
+  net_metering_yearly:
+    source: sensor.net_metering_daily
+    cycle: yearly
+    net_consumption: true
+  water_front_daily:
+    source: sensor.water_consumption_front
+    cycle: daily
+  water_front_monthly:
+    source: sensor.water_consumption_front
+    cycle: monthly
+  water_front_yearly:
+    source: sensor.water_consumption_front
+    cycle: yearly
+  water_garden_daily:
+    source: sensor.water_consumption_garden
+    cycle: daily
+  water_garden_monthly:
+    source: sensor.water_consumption_garden
+    cycle: monthly
+  water_garden_yearly:
+    source: sensor.water_consumption_garden
+    cycle: yearly
